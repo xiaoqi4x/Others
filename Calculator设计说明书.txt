@@ -1,0 +1,400 @@
+﻿1.代码分析
+public class MainActivity extends Activity implements OnClickListener{
+Button btn0;	
+	.
+	.
+	.
+protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        btn0=(Button) findViewById(R.id.btn_0);//实例化控件
+				.
+				.
+				.
+	    btn0.setOnClickListener(this);//添加监听器
+		}
+public void onClick(View v) {           接口OnClickListener方法
+String str=input.getText().toString();
+		switch (v.getId()) {
+		case R.id.btn_0:
+			.
+			.
+			.
+		case R.id.btn_9:
+		case R.id.point:
+//textview是否是0或者按了等号，如果是0或者按了等号，再输入数字的时候会清楚textview
+			if(str.equals("0")||flag==1){    
+				flag=0;
+				input.setText(((Button)v).getText());
+				
+			}
+			else {
+				flag=0;
+				input.setText(str+((Button)v).getText());
+			}
+			
+			break;
+		case R.id.multiply:
+		case R.id.add:
+		case R.id.sub:
+		case R.id.divide:
+			flag=0;
+			//判断textview是否以符号结尾，是的话进行更新符号
+			if(input.getText().toString().endsWith("-")||input.getText().toString().endsWith("+")||input.getText().toString().endsWith("×")||input.getText().toString().endsWith("÷")){
+				input.setText(str.substring(0,str.length()-1)+((Button)v).getText());
+			}
+			else
+				input.setText(str+((Button)v).getText());
+		    //截取符号
+			op=input.getText().toString().substring(input.getText().toString().length()-1);
+			break;
+		case R.id.clear:
+			flag=0;
+			input.setText("0");
+			break;
+		case R.id.delete:
+		    //判断textview是否是0或者没有按等号的时候
+			if(!str.equals("0")&&flag==0){
+				if(input.getText().length()<2)
+					input.setText("0");
+				else
+				input.setText(str.substring(0,str.length()-1));
+			}
+			else{
+				input.setText("0");
+				flag=0;
+			}
+			break;
+		case R.id.equal:
+			flag=1;
+			result();
+			break;
+		default:
+			break;
+		}	
+	}
+    private void result(){
+    	String exp=input.getText().toString();
+		//如果只有数字然后按等号返回数字
+    	if(!exp.contains("+")&&!exp.contains("-")&&!exp.contains("÷")&&!exp.contains("×")){
+    	return ;
+		//如果是以符号结尾在按等号直接返回数字
+    	}else if (exp.endsWith("+")||exp.endsWith("-")||exp.endsWith("÷")||exp.endsWith("×")) {
+		    input.setText(exp.substring(0, exp.length()-1));
+		}else{
+			String fstr=exp.substring(0, exp.indexOf(op));
+			String sstr=exp.substring(exp.indexOf(op)+1);
+			double fstr1=Double.parseDouble(fstr);
+			double sstr1=Double.parseDouble(sstr);
+			String result;
+			if(op.equals("+")){
+				result=String.valueOf(fstr1+sstr1);
+				if(result.substring(result.indexOf(".")).equals(".0")){
+					input.setText(result.substring(0,result.length()-2));
+				}
+				else
+					input.setText(result);
+			}
+			else if(op.equals("-")){
+				result=String.valueOf(fstr1-sstr1);
+				if(result.substring(result.indexOf(".")).equals(".0")){
+					input.setText(result.substring(0,result.length()-2));
+				}
+				else
+				input.setText(result);
+			}
+			else if(op.equals("×")){
+				result=String.valueOf(fstr1*sstr1);
+				if(result.substring(result.indexOf(".")).equals(".0")){
+					input.setText(result.substring(0,result.length()-2));
+				}
+				else
+				input.setText(result);
+			}
+			else{
+				result=String.valueOf(fstr1/sstr1);
+				if(result.substring(result.indexOf(".")).equals(".0")){
+					input.setText(result.substring(0,result.length()-2));
+				}
+				else
+				input.setText(result);
+			}
+			
+		}
+    }
+
+
+2.界面设计
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#D3D3D3"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/input"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:background="@drawable/dt"
+        android:editable="false"
+        android:ems="10"
+        android:textSize="30sp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="15dp"
+        android:gravity="right|bottom" >
+
+        <requestFocus />
+    </EditText>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+
+    <Button
+        android:id="@+id/clear"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector1"
+        android:gravity="right|bottom"
+        android:text="C"
+        android:textSize="25sp" />
+
+    <Button
+        android:id="@+id/delete"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector1"
+        android:layout_marginLeft="15dp"
+        android:gravity="right|bottom"
+        android:text="DEL"
+        android:textSize="25sp" />
+
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector"
+        android:text="÷"
+        android:layout_marginLeft="15dp"
+        android:textSize="25sp"
+         android:gravity="right|bottom"
+        android:id="@+id/divide"
+        />
+     <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector"
+        android:text="×"
+        android:layout_marginLeft="15dp"
+        android:textSize="25sp"
+        android:gravity="right|bottom"
+        android:id="@+id/multiply"
+        />
+     </LinearLayout>
+     
+ <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector"
+        android:text="7"
+        android:textSize="25sp"
+        android:gravity="right|bottom"
+        android:id="@+id/btn_7"
+        />
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector"
+        android:text="8"
+        android:layout_marginLeft="15dp"
+        android:textSize="25sp"
+         android:gravity="right|bottom"
+        android:id="@+id/btn_8"
+        />
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector"
+        android:text="9"
+        android:layout_marginLeft="15dp"
+        android:textSize="25sp"
+         android:gravity="right|bottom"
+        android:id="@+id/btn_9"
+        />
+     <Button
+       android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector"
+        android:text="-"
+        android:layout_marginLeft="15dp"
+        android:textSize="25sp"
+         android:gravity="right|bottom"
+        android:id="@+id/sub"
+        />
+     </LinearLayout>
+      <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+    <Button
+       android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector"
+        android:text="4"
+        android:textSize="25sp"
+        android:gravity="right|bottom"
+        android:id="@+id/btn_4"
+        />
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector"
+        android:text="5"
+        android:layout_marginLeft="15dp"
+        android:textSize="25sp"
+         android:gravity="right|bottom"
+        android:id="@+id/btn_5"
+        />
+    <Button
+       android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector"
+        android:text="6"
+        android:layout_marginLeft="15dp"
+        android:textSize="25sp"
+         android:gravity="right|bottom"
+        android:id="@+id/btn_6"
+        />
+     <Button
+      android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector"
+        android:text="+"
+        android:layout_marginLeft="15dp"
+        android:textSize="25sp"
+        android:gravity="right|bottom"
+        android:id="@+id/add"
+        />
+     </LinearLayout>
+     
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+     <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+         >
+         <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+              <Button
+       android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector"
+        android:text="1"
+        android:textSize="25sp"
+        android:gravity="right|bottom"
+        android:id="@+id/btn_1"
+        />
+               <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector"
+        android:text="2"
+        android:layout_marginLeft="15dp"
+        android:textSize="25sp"
+        android:gravity="right|bottom"
+        android:id="@+id/btn_2"
+        />
+                <Button
+       android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector"
+        android:text="3"
+        android:layout_marginLeft="15dp"
+        android:textSize="25sp"
+        android:gravity="right|bottom"
+        android:id="@+id/btn_3"
+        />
+         </LinearLayout>
+         
+         <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp" >
+               <Button
+       android:layout_width="135dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector"
+        android:text="0"
+        android:textSize="25sp"
+        android:gravity="right|bottom"
+        android:id="@+id/btn_0"
+        />
+               <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector"
+        android:text="."
+        android:layout_marginLeft="15dp"
+        android:textSize="25sp"
+        android:gravity="right|bottom"
+        android:id="@+id/point"
+        />
+         </LinearLayout>
+         
+     </LinearLayout>
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="140dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/selector1"
+        android:text="="
+        android:layout_marginLeft="15dp"
+        android:textSize="25sp"
+        android:gravity="right|bottom"
+        android:id="@+id/equal"
+        />
+        </LinearLayout>
+
+</LinearLayout>
+
+3.技术分析
+res---->values--->定义color.xml
+drawable中定义控件格式的xml文件
